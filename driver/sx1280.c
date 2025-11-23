@@ -6,7 +6,7 @@
 #include <linux/delay.h>
 #include <linux/jiffies.h>
 
-#include "sx1280_driver.h"
+#include "sx1280.h"
 
 struct sx1280 {
     struct spi_device *spi;

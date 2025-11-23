@@ -1,0 +1,1 @@
+savedcmd_/home/drathgeb/Documents/RPI-SX1280/driver/Module.symvers :=  scripts/mod/modpost -M -m -a      -o /home/drathgeb/Documents/RPI-SX1280/driver/Module.symvers -n -T /home/drathgeb/Documents/RPI-SX1280/driver/modules.order -i Module.symvers -e 

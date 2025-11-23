@@ -1,36 +1,35 @@
-# SPDX-License-Identifier: GPL-2.0
-#
-# Makefile for SX1280 LoRa Radio Driver
-#
-
-# Module name
 obj-m := sx1280.o
 
-# Source files (without .c extension)
-sx1280-objs := skeleton.o
 
-# Kernel build directory (default to current running kernel)
-KDIR ?= /lib/modules/$(shell uname -r)/build
+KDIR ?= /home/drathgeb/src/rpi-linux-6.12
 
-# Current directory
-PWD := $(shell pwd)
+PWD  := $(shell pwd)
+BDIR := $(PWD)/build
 
-# Default target: build the module
+BUILD_FILES := *.o *.ko *.mod *.mod.c *.order *.symvers \
+               .*.cmd .tmp_versions modules.order
+
 all:
+	mkdir -p $(BDIR)
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
+	@mv -f $(BUILD_FILES) $(BDIR) 2>/dev/null || true
 
-# Clean build artifacts
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
+	rm -rf $(BDIR)
 
+tidy:
+	mkdir -p $(BDIR)
+	@mv -f $(BUILD_FILES) $(BDIR) 2>/dev/null || true
+	
 # Install module to kernel modules directory
 install:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules_install
 	depmod -a
 
-# Load the module
+# Load the module (from build dir)
 load:
-	sudo insmod sx1280.ko
+	sudo insmod $(BDIR)/sx1280.ko
 
 # Unload the module
 unload:
@@ -46,17 +45,12 @@ dmesg:
 # Help target
 help:
 	@echo "SX1280 Driver Build Targets:"
-	@echo "  make          - Build the kernel module"
+	@echo "  make          - Build the kernel module into ./build/"
 	@echo "  make clean    - Remove build artifacts"
 	@echo "  make install  - Install module to system"
-	@echo "  make load     - Load the module (insmod)"
+	@echo "  make load     - Load the module (insmod from ./build)"
 	@echo "  make unload   - Unload the module (rmmod)"
 	@echo "  make reload   - Unload and reload module"
 	@echo "  make dmesg    - Show recent kernel messages"
-	@echo ""
-	@echo "Test sequence:"
-	@echo "  1. make"
-	@echo "  2. make load"
-	@echo "  3. make dmesg"
 
 .PHONY: all clean install load unload reload dmesg help
